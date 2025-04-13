@@ -15,7 +15,7 @@ public class VmAllocationPolicyEnergyAware extends VmAllocationPolicy {
         // Select host with lowest current CPU utilization (energy-aware)
         Host selectedHost = getHostList().stream()
             .filter(host -> host.isSuitableForVm(vm))
-            .min(Comparator.comparingDouble(this::calculateCurrentUtilization))
+            .min(Comparator.comparingDouble((Host host) -> calculateCurrentUtilization(host)))
             .orElse(null);
 
         if (selectedHost != null && selectedHost.vmCreate(vm)) {
