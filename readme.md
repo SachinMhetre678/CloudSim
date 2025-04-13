@@ -57,8 +57,6 @@ Just push to the main branch or open a PR. GitHub Actions will:
 - Run the simulation
 - Archive the results
 
-> 🔗 CI Status: ![CI/CD Pipeline](https://github.com/your-repo/cloudsim-energy-aware/actions/workflows/maven.yml/badge.svg)
-
 ---
 
 ## 🔧 Understanding the Simulation
