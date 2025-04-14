@@ -31,7 +31,6 @@ Key aspects include:
 ## 🖥 Requirements
 
 - **Java JDK** 11+
-- **Apache Maven**
 - **CloudSim 3.0.3** (included in `/lib`)
 - **GitHub Actions** for CI/CD 
 ---
