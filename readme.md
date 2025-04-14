@@ -46,8 +46,8 @@ git clone https://github.com/your-repo/cloudsim-energy-aware.git
 cd cloudsim-energy-aware
 
 # Compile and run the simulation
-mvn clean package
-java -cp target/classes:lib/cloudsim-3.0.3.jar org.cloudbus.cloudsim.Main
+javac -Xlint:unchecked -cp "lib/cloudsim-3.0.3.jar" -d bin src/org/cloudbus/cloudsim/*.java
+java -cp "bin;lib/cloudsim-3.0.3.jar" org.cloudbus.cloudsim.Main
 ```
 
 ### ✅ Run via CI/CD (GitHub Actions)
