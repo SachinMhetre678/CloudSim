@@ -1,30 +1,28 @@
 package org.cloudbus.cloudsim;
 
+import org.cloudbus.cloudsim.core.CloudSim;
 import java.util.*;
 import java.io.*;
 import java.text.DecimalFormat;
-import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
-
-
 
 public class Main {
     private static List<Host> hostList;
     private static List<Vm> vmList;
     private static List<Cloudlet> cloudletList;
+    private static double lastUpdateTime = 0.0;
 
-    @SuppressWarnings("unused")
     public static void main(String[] args) {
         try {
             Log.printLine("Starting Energy-Aware CloudSim Simulation...");
 
             // Initialize CloudSim
-            int num_user = 1;
+            int numUsers = 1;
             Calendar calendar = Calendar.getInstance();
-            boolean trace_flag = false;
-            CloudSim.init(num_user, calendar, trace_flag);
+            boolean traceFlag = false;
+            CloudSim.init(numUsers, calendar, traceFlag);
 
             // Create Datacenter with energy-aware policy
             Datacenter datacenter = createDatacenter();
@@ -41,9 +39,12 @@ public class Main {
             // Start simulation
             CloudSim.startSimulation();
 
+            // Update metrics during simulation
+            updateMetrics(datacenter);
+
             // Collect and print results
             List<Cloudlet> finishedCloudlets = broker.getCloudletReceivedList();
-            printResults(finishedCloudlets, vmList, hostList);
+            printResults(finishedCloudlets, vmList, hostList, datacenter);
 
             Log.printLine("Energy-Aware Simulation finished!");
         } catch (Exception e) {
@@ -61,15 +62,14 @@ public class Main {
             List<Pe> peList = new ArrayList<>();
             peList.add(new Pe(0, new PeProvisionerSimple(mips[i])));
 
-            Host host = new Host(
+            hostList.add(new Host(
                 i,
                 new RamProvisionerSimple(2048), // 2GB RAM
                 new BwProvisionerSimple(10000), // 10Gbps bandwidth
                 1000000, // Storage
                 peList,
                 new VmSchedulerTimeShared(peList) // Time-shared scheduling
-            );
-            hostList.add(host);
+            ));
         }
 
         // Datacenter characteristics
@@ -98,7 +98,7 @@ public class Main {
         for (int i = 0; i < 3; i++) {
             vms.add(new Vm(
                 i, brokerId, 
-                800, // MIPS
+                1000, // MIPS
                 1,    // Number of CPUs
                 1024, // RAM (MB)
                 1000,  // Bandwidth
@@ -132,36 +132,39 @@ public class Main {
         return cloudlets;
     }
 
-    private static double calculateHostUtilization(Host host) {
-        double totalUtilization = 0.0;
-        for (Pe pe : host.getPeList()) {
-            totalUtilization += pe.getPeProvisioner().getUtilization();
+    private static void updateMetrics(Datacenter datacenter) {
+        double currentTime = CloudSim.clock();
+        VmAllocationPolicyEnergyAware policy = 
+            (VmAllocationPolicyEnergyAware) datacenter.getVmAllocationPolicy();
+        
+        for (Host host : hostList) {
+            double utilization = policy.calculateCurrentUtilization(host);
+            
+            // Changed from trackHostUtilization to recordHostUtilization
+            policy.recordHostUtilization(host, utilization);
+            
+            // Changed from updateEnergyConsumption to updateHostEnergy
+            double timeDiff = currentTime - lastUpdateTime;
+            policy.updateHostEnergy(host, utilization, timeDiff);
         }
-        return totalUtilization / host.getPeList().size();
+        lastUpdateTime = currentTime;
     }
-    
-    private static double calculateEnergyConsumption(Host host, double utilization) {
-        double maxPower = 250.0; // Max power in watts
-        double idlePower = 150.0; // Idle power in watts
-        return idlePower + (maxPower - idlePower) * utilization;
-    }
-    
 
-    private static void printResults(List<Cloudlet> cloudlets, List<Vm> vms, List<Host> hosts) {
-        try {
-            // Create results directory
-            java.io.File dir = new java.io.File("results");
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-    
-            PrintWriter writer = new PrintWriter("results/summary.csv");
+    private static void printResults(List<Cloudlet> cloudlets, List<Vm> vms, 
+                                   List<Host> hosts, Datacenter datacenter) {
+                                    try {
+                                        // Create results directory
+                                        java.io.File dir = new java.io.File("results");
+                                        if (!dir.exists()) {
+                                            dir.mkdir();
+                                        }
+                                
+                                        PrintWriter writer = new PrintWriter(new java.io.File("results/summary.csv"));
             writer.println("Type,ID,Metric,Value");
     
             DecimalFormat df = new DecimalFormat("0.00");
     
             // ========== TERMINAL OUTPUT ==========
-    
             Log.printLine("\n====== CLOUDSIM SIMULATION RESULTS ======\n");
     
             // Cloudlet Execution Table
@@ -179,16 +182,17 @@ public class Main {
             }
     
             // Host Utilization Table
+            VmAllocationPolicyEnergyAware policy = 
+                (VmAllocationPolicyEnergyAware) datacenter.getVmAllocationPolicy();
+            
             Log.printLine("\nHost ID | CPU Util (%) | Energy (J) | VMs Count");
             Log.printLine("----------------------------------------------");
     
             for (Host h : hosts) {
-                double utilization = calculateHostUtilization(h);
-                double energy = calculateEnergyConsumption(h, utilization);
                 Log.printLine(String.format("%-7d | %-13s | %-10s | %-9d",
                     h.getId(),
-                    df.format(utilization * 100),
-                    df.format(energy),
+                    df.format(policy.getAverageUtilization(h.getId()) * 100),
+                    df.format(policy.getTotalEnergy(h.getId())),
                     h.getVmList().size()));
             }
     
@@ -202,7 +206,7 @@ public class Main {
             Log.printLine(String.format("%-25s | %-6d", "Hosts Utilized", 
                 hosts.stream().filter(h -> h.getVmList().size() > 0).count()));
     
-            // Save to CSV (same as before)
+            // Save to CSV
             for (Cloudlet c : cloudlets) {
                 writer.printf("Cloudlet,%d,StartTime,%s%n", c.getCloudletId(), df.format(c.getExecStartTime()));
                 writer.printf("Cloudlet,%d,FinishTime,%s%n", c.getCloudletId(), df.format(c.getFinishTime()));
@@ -215,19 +219,18 @@ public class Main {
             }
     
             for (Host h : hosts) {
-                double utilization = calculateHostUtilization(h);
-                double energy = calculateEnergyConsumption(h, utilization);
-                writer.printf("Host,%d,CPUUtilization,%s%n", h.getId(), df.format(utilization * 100));
-                writer.printf("Host,%d,EnergyConsumed,%s%n", h.getId(), df.format(energy));
+                writer.printf("Host,%d,CPUUtilization,%s%n", h.getId(), 
+                    df.format(policy.getAverageUtilization(h.getId()) * 100));
+                writer.printf("Host,%d,EnergyConsumed,%s%n", h.getId(), 
+                    df.format(policy.getTotalEnergy(h.getId())));
                 writer.printf("Host,%d,VMsCount,%d%n", h.getId(), h.getVmList().size());
             }
     
             writer.close();
-    
             Log.printLine("\nDetailed metrics saved to results/summary.csv");
     
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             Log.printLine("Error writing results: " + e.getMessage());
         }
-    }    
+    }
 }

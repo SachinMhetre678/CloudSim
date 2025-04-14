@@ -3,1348 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CloudSim Advanced Energy-Aware Simulation Results</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #0d6efd;
-            --primary-light: #e9f5ff;
-            --success: #198754;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --dark: #212529;
-        }
-        
-        body {
-            background-color: #f8f9fa;
-            padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .dashboard-header {
-            position: relative;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            padding: 25px;
-            margin-bottom: 20px;
-            border-top: 5px solid var(--primary);
-        }
-        
-        .results-container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            padding: 25px;
-            margin-bottom: 20px;
-        }
-        
-        .header {
-            color: var(--primary);
-            font-weight: 700;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary);
-        }
-        
-        .summary-card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        .summary-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .card-icon {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            color: var(--primary);
-        }
-        
-        .metric-value {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: var(--dark);
-        }
-        
-        .section-title {
-            font-weight: 600;
-            margin: 35px 0 20px 0;
-            color: var(--dark);
-            border-left: 4px solid var(--primary);
-            padding-left: 10px;
-        }
-        
-        table {
-            font-size: 0.95rem;
-            width: 100%;
-            margin-bottom: 30px;
-        }
-        
-        th {
-            background-color: var(--primary);
-            color: white;
-            font-weight: 600;
-            padding: 12px !important;
-            position: sticky;
-            top: 0;
-        }
-        
-        .table-striped tbody tr:nth-of-type(odd) {
-            background-color: rgba(13, 110, 253, 0.05);
-        }
-        
-        .table-hover tbody tr:hover {
-            background-color: rgba(13, 110, 253, 0.1);
-        }
-        
-        .badge {
-            padding: 6px 10px;
-            font-weight: 500;
-        }
-        
-        .chart-container {
-            padding: 20px;
-            background-color: var(--primary-light);
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            margin-bottom: 20px;
-        }
-        
-        .tab-pane {
-            padding: 20px 0;
-        }
-        
-        .nav-tabs .nav-link {
-            font-weight: 500;
-            color: var(--dark);
-            padding: 10px 20px;
-        }
-        
-        .nav-tabs .nav-link.active {
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
-            font-weight: 600;
-        }
-        
-        .detail-metric {
-            background-color: var(--primary-light);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-        
-        .detail-metric h5 {
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .detail-metric p {
-            margin-bottom: 5px;
-        }
-        
-        .detail-label {
-            font-weight: 500;
-            color: var(--dark);
-        }
-        
-        .detail-value {
-            font-weight: 600;
-        }
-        
-        .export-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
-        
-        .btn-export {
-            margin-left: 10px;
-        }
-        
-        .timestamp {
-            font-size: 0.85rem;
-            color: #6c757d;
-        }
-        
-        .progress {
-            height: 10px;
-            margin-bottom: 5px;
-        }
-        
-        .progress-bar {
-            background-color: var(--primary);
-        }
-        
-        .utilization-meter {
-            width: 100%;
-            height: 20px;
-            background-color: #e9ecef;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        
-        .utilization-value {
-            height: 100%;
-            background-color: var(--primary);
-            transition: width 1s;
-        }
-        
-        .filter-container {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .tooltip-inner {
-            max-width: 200px;
-            padding: 10px;
-            background-color: #212529;
-        }
-        
-        .kpi-card {
-            border-left: 4px solid var(--primary);
-            background-color: white;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
-            margin-bottom: 15px;
-        }
-        
-        .kpi-title {
-            font-size: 0.85rem;
-            color: #6c757d;
-            margin-bottom: 5px;
-        }
-        
-        .kpi-value {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--dark);
-        }
-        
-        .kpi-unit {
-            font-size: 0.85rem;
-            color: #6c757d;
-            margin-left: 5px;
-        }
-        
-        /* Overview panel animation */
-        .overview-panel {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.5s ease forwards;
-        }
-        
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Visual indicator for better vs worse energy efficiency */
-        .energy-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-        
-        .energy-efficient {
-            background-color: var(--success);
-        }
-        
-        .energy-moderate {
-            background-color: var(--warning);
-        }
-        
-        .energy-inefficient {
-            background-color: var(--danger);
-        }
-        
-        .efficiency-score {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-    </style>
+    <title>CloudSim Analytics Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <div class="dashboard-header">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 class="header mb-0">CloudSim Energy-Aware Simulation Dashboard</h1>
-                    <p class="text-muted mb-0">Comprehensive analysis of cloud resource utilization and energy consumption</p>
-                </div>
-                <div class="col-md-4 text-end">
-                    <span class="timestamp">Simulation conducted on <span id="simulation-date"></span></span>
-                </div>
+    <div class="sidebar">
+        <div class="logo-container">
+            <div class="logo">
+                <i class="fas fa-cloud"></i>
             </div>
+            <h2>CloudSim</h2>
         </div>
-
-        <div id="loading" class="loading">
-            <div class="spinner-border text-primary loading-spinner" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <h4>Loading Simulation Data</h4>
-            <p class="text-muted">Please wait while we process the simulation results...</p>
-        </div>
-
-        <div id="content" style="display: none;">
-            <!-- Export options -->
-            <div class="export-container">
-                <button class="btn btn-outline-secondary btn-export" onclick="exportToPDF()">
-                    <i class="fas fa-file-pdf me-2"></i>Export PDF
-                </button>
-                <button class="btn btn-outline-secondary btn-export" onclick="exportToCSV()">
-                    <i class="fas fa-file-csv me-2"></i>Export CSV
-                </button>
-            </div>
-
-            <!-- Overview cards -->
-            <div class="row overview-panel" style="animation-delay: 0.1s;">
-                <div class="col-md-3">
-                    <div class="summary-card text-center">
-                        <i class="fas fa-tasks card-icon"></i>
-                        <h6 class="card-subtitle mb-2 text-muted">Total Cloudlets</h6>
-                        <p class="metric-value" id="total-cloudlets">0</p>
-                        <div class="progress">
-                            <div class="progress-bar" id="cloudlet-progress" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <small class="text-muted">Processing workload</small>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="summary-card text-center">
-                        <i class="fas fa-check-circle card-icon"></i>
-                        <h6 class="card-subtitle mb-2 text-muted">Successful Cloudlets</h6>
-                        <p class="metric-value" id="successful-cloudlets">0</p>
-                        <div class="progress">
-                            <div class="progress-bar bg-success" id="success-progress" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <small class="text-muted">Success rate: <span id="success-rate">0%</span></small>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="summary-card text-center">
-                        <i class="fas fa-server card-icon"></i>
-                        <h6 class="card-subtitle mb-2 text-muted">VMs Created</h6>
-                        <p class="metric-value" id="vms-created">0</p>
-                        <div class="progress">
-                            <div class="progress-bar" id="vm-progress" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <small class="text-muted">Virtual machine instances</small>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="summary-card text-center">
-                        <i class="fas fa-microchip card-icon"></i>
-                        <h6 class="card-subtitle mb-2 text-muted">Hosts Utilized</h6>
-                        <p class="metric-value" id="hosts-utilized">0</p>
-                        <div class="progress">
-                            <div class="progress-bar" id="host-progress" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <small class="text-muted">Physical servers</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Key Performance Indicators -->
-            <div class="results-container overview-panel" style="animation-delay: 0.2s;">
-                <h3 class="section-title">Key Performance Indicators</h3>
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="kpi-card">
-                            <div class="kpi-title">Avg. Execution Time</div>
-                            <div class="kpi-value" id="avg-execution-time">0<span class="kpi-unit">ms</span></div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="kpi-card">
-                            <div class="kpi-title">Avg. CPU Utilization</div>
-                            <div class="kpi-value" id="avg-cpu-utilization">0<span class="kpi-unit">%</span></div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="kpi-card">
-                            <div class="kpi-title">Total Energy Consumed</div>
-                            <div class="kpi-value" id="total-energy">0<span class="kpi-unit">J</span></div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="kpi-card">
-                            <div class="kpi-title">Energy Efficiency Score</div>
-                            <div class="kpi-value" id="efficiency-score">0<span class="kpi-unit">/10</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Navigation tabs -->
-            <div class="results-container overview-panel" style="animation-delay: 0.3s;">
-                <ul class="nav nav-tabs" id="resultTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="cloudlet-tab" data-bs-toggle="tab" data-bs-target="#cloudlets" type="button" role="tab" aria-controls="cloudlets" aria-selected="true">
-                            <i class="fas fa-tasks me-2"></i>Cloudlet Details
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="vm-tab" data-bs-toggle="tab" data-bs-target="#vms" type="button" role="tab" aria-controls="vms" aria-selected="false">
-                            <i class="fas fa-server me-2"></i>VM Metrics
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="host-tab" data-bs-toggle="tab" data-bs-target="#hosts" type="button" role="tab" aria-controls="hosts" aria-selected="false">
-                            <i class="fas fa-microchip me-2"></i>Host Utilization
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="energy-tab" data-bs-toggle="tab" data-bs-target="#energy" type="button" role="tab" aria-controls="energy" aria-selected="false">
-                            <i class="fas fa-bolt me-2"></i>Energy Analysis
-                        </button>
-                    </li>
-                </ul>
-                
-                <div class="tab-content" id="resultTabContent">
-                    <!-- Cloudlet Details Tab -->
-                    <div class="tab-pane fade show active" id="cloudlets" role="tabpanel" aria-labelledby="cloudlet-tab">
-                        <div class="filter-container">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <input type="text" id="cloudlet-search" class="form-control" placeholder="Search cloudlets...">
-                                </div>
-                                <div class="col-md-4">
-                                    <select id="status-filter" class="form-select">
-                                        <option value="all">All Statuses</option>
-                                        <option value="success">Success</option>
-                                        <option value="failed">Failed</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="d-flex justify-content-end">
-                                        <button id="reset-filters" class="btn btn-outline-secondary">Reset Filters</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Cloudlet ID</th>
-                                        <th>Status</th>
-                                        <th>VM ID</th>
-                                        <th>Execution Time (ms)</th>
-                                        <th>Start Time</th>
-                                        <th>Finish Time</th>
-                                        <th>CPU Time</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cloudlet-results">
-                                    <!-- Cloudlet data will be inserted here by JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <!-- VM Metrics Tab -->
-                    <div class="tab-pane fade" id="vms" role="tabpanel" aria-labelledby="vm-tab">
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="chart-container">
-                                    <h5>VM CPU Utilization</h5>
-                                    <canvas id="vm-utilization-chart" height="250"></canvas>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="chart-container">
-                                    <h5>VM RAM Utilization</h5>
-                                    <canvas id="vm-ram-chart" height="250"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>VM ID</th>
-                                        <th>Host ID</th>
-                                        <th>Status</th>
-                                        <th>CPU Utilization</th>
-                                        <th>RAM Utilization</th>
-                                        <th>Cloudlets Processed</th>
-                                        <th>Start Time</th>
-                                        <th>Finish Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="vm-results">
-                                    <!-- VM data will be inserted here by JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <!-- Host Utilization Tab -->
-                    <div class="tab-pane fade" id="hosts" role="tabpanel" aria-labelledby="host-tab">
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="chart-container">
-                                    <h5>Host CPU Utilization</h5>
-                                    <canvas id="host-utilization-chart" height="250"></canvas>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="chart-container">
-                                    <h5>Host Memory Utilization</h5>
-                                    <canvas id="host-memory-chart" height="250"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div id="host-details-container">
-                            <!-- Host details will be inserted here by JavaScript -->
-                        </div>
-                    </div>
-                    
-                    <!-- Energy Analysis Tab -->
-                    <div class="tab-pane fade" id="energy" role="tabpanel" aria-labelledby="energy-tab">
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="chart-container">
-                                    <h5>Energy Consumption by Host</h5>
-                                    <canvas id="energy-chart" height="250"></canvas>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="chart-container">
-                                    <h5>Energy vs. Utilization</h5>
-                                    <canvas id="energy-utilization-chart" height="250"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="chart-container">
-                                    <h5>Energy Consumption Over Time</h5>
-                                    <canvas id="energy-time-chart" height="200"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h4 class="mt-4">Energy Efficiency Analysis</h4>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Host ID</th>
-                                        <th>Energy Consumed (J)</th>
-                                        <th>Workload Processed</th>
-                                        <th>Energy per Workload Unit</th>
-                                        <th>Efficiency Rating</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="energy-results">
-                                    <!-- Energy data will be inserted here by JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="text-center text-muted mt-4">
-            <p>Simulation completed at <span id="completion-time"></span></p>
-            <p><small>CloudSim Energy-Aware Simulation v2.1</small></p>
+        <nav>
+            <ul>
+                <li class="active"><i class="fas fa-chart-line"></i> Dashboard</li>
+                <li><i class="fas fa-server"></i> Resources</li>
+                <li><i class="fas fa-bolt"></i> Energy</li>
+                <li><i class="fas fa-cog"></i> Settings</li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <p>CloudSim v3.0.3</p>
         </div>
     </div>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/papaparse/5.3.0/papaparse.min.js"></script>
-    
-    <script>
-        // Set current date and time
-        const currentDate = new Date();
-        document.getElementById('simulation-date').textContent = currentDate.toLocaleString();
-        document.getElementById('completion-time').textContent = currentDate.toLocaleTimeString();
+    <div class="main-content">
+        <header>
+            <div class="header-title">
+                <h1>Resource Analytics Dashboard</h1>
+                <p class="subtitle">VM Allocation & Energy Consumption Monitoring</p>
+            </div>
+            <div class="header-actions">
+                <span id="last-updated"><i class="fas fa-clock"></i> Loading data...</span>
+                <button id="refresh-btn"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+            </div>
+        </header>
 
-        // Generate some simulated data for a more comprehensive demo
-        function generateSimulatedData() {
-            const data = {
-                cloudlets: {},
-                vms: {},
-                hosts: {},
-                timeSeriesData: []
-            };
-            
-            // Simulation parameters
-            const numHosts = 5;
-            const numVMs = 12;
-            const numCloudlets = 50;
-            
-            // Generate host data
-            for (let i = 1; i <= numHosts; i++) {
-                const cpuUtil = 30 + Math.random() * 50; // 30-80%
-                const memoryUtil = 20 + Math.random() * 60; // 20-80%
-                const energyConsumed = 500 + Math.random() * 1500; // 500-2000J
-                
-                data.hosts[i] = {
-                    id: i,
-                    CPUUtilization: cpuUtil.toFixed(2),
-                    MemoryUtilization: memoryUtil.toFixed(2),
-                    EnergyConsumed: energyConsumed.toFixed(2),
-                    Status: 'Active',
-                    StartTime: generateRandomTime(currentDate, -120),
-                    VMs: []
-                };
-            }
-            
-            // Generate VM data
-            for (let i = 1; i <= numVMs; i++) {
-                const hostId = Math.ceil(Math.random() * numHosts);
-                const cpuUtil = 10 + Math.random() * 80; // 10-90%
-                const ramUtil = 20 + Math.random() * 60; // 20-80%
-                const cloudletsProcessed = Math.floor(1 + Math.random() * 8); // 1-8 cloudlets
-                
-                data.vms[i] = {
-                    id: i,
-                    HostID: hostId,
-                    Status: Math.random() > 0.1 ? 'Success' : 'Failed',
-                    CPUUtilization: cpuUtil.toFixed(2),
-                    RAMUtilization: ramUtil.toFixed(2),
-                    CloudletsProcessed: cloudletsProcessed,
-                    StartTime: generateRandomTime(currentDate, -100),
-                    FinishTime: generateRandomTime(currentDate, -20)
-                };
-                
-                // Add VM to host's VM list
-                if (!data.hosts[hostId].VMs) {
-                    data.hosts[hostId].VMs = [];
-                }
-                data.hosts[hostId].VMs.push(i);
-            }
-            
-            // Generate cloudlet data
-            for (let i = 1; i <= numCloudlets; i++) {
-                const vmId = Math.ceil(Math.random() * numVMs);
-                const status = Math.random() > 0.1 ? 'Success' : 'Failed';
-                const executionTime = 100 + Math.random() * 2000; // 100-2100ms
-                const startTime = generateRandomTime(currentDate, -90);
-                const finishTime = status === 'Success' ? generateRandomTime(currentDate, -10) : 'N/A';
-                
-                data.cloudlets[i] = {
-                    id: i,
-                    Status: status,
-                    VMID: vmId,
-                    ExecutionTime: status === 'Success' ? executionTime.toFixed(2) : 'N/A',
-                    CPUTime: status === 'Success' ? (executionTime * 0.8).toFixed(2) : 'N/A',
-                    StartTime: startTime,
-                    FinishTime: finishTime
-                };
-            }
-            
-            // Generate time series data for energy consumption
-            const timePoints = 20;
-            for (let i = 0; i < timePoints; i++) {
-                const timePoint = {
-                    timestamp: generateRandomTime(currentDate, -120 + i * 6),
-                    hostData: {}
-                };
-                
-                for (let h = 1; h <= numHosts; h++) {
-                    const baseEnergy = parseFloat(data.hosts[h].EnergyConsumed) / timePoints;
-                    timePoint.hostData[h] = {
-                        energy: (baseEnergy * (0.8 + Math.random() * 0.4)).toFixed(2),
-                        utilization: (parseFloat(data.hosts[h].CPUUtilization) * (0.7 + Math.random() * 0.6)).toFixed(2)
-                    };
-                }
-                
-                data.timeSeriesData.push(timePoint);
-            }
-            
-            return data;
-        }
-        
-        // Helper function to generate random timestamps
-        function generateRandomTime(baseDate, minutesOffset) {
-            const date = new Date(baseDate);
-            date.setMinutes(date.getMinutes() + minutesOffset);
-            return date.toLocaleTimeString();
-        }
-        
-        // Function to display the data
-        function displayData(parsedData) {
-            // Calculate summary metrics
-            const cloudletCount = Object.keys(parsedData.cloudlets).length;
-            const successCount = Object.values(parsedData.cloudlets).filter(
-                c => c.Status && c.Status.toLowerCase() === 'success').length;
-            const vmCount = Object.keys(parsedData.vms).length;
-            const hostCount = Object.keys(parsedData.hosts).length;
-            
-            // Calculate success rate
-            const successRate = ((successCount / cloudletCount) * 100).toFixed(1);
-            
-            // Update summary cards
-            document.getElementById('total-cloudlets').textContent = cloudletCount;
-            document.getElementById('successful-cloudlets').textContent = successCount;
-            document.getElementById('vms-created').textContent = vmCount;
-            document.getElementById('hosts-utilized').textContent = hostCount;
-            document.getElementById('success-rate').textContent = successRate + '%';
-            
-            // Update progress bars with animation
-            setTimeout(() => {
-                document.getElementById('cloudlet-progress').style.width = '100%';
-                document.getElementById('success-progress').style.width = successRate + '%';
-                document.getElementById('vm-progress').style.width = (vmCount / 20 * 100) + '%';
-                document.getElementById('host-progress').style.width = (hostCount / 10 * 100) + '%';
-            }, 500);
-            
-            // Calculate KPIs
-            const execTimes = Object.values(parsedData.cloudlets)
-                .filter(c => c.Status && c.Status.toLowerCase() === 'success' && !isNaN(parseFloat(c.ExecutionTime)))
-                .map(c => parseFloat(c.ExecutionTime));
-            
-            const avgExecTime = execTimes.length > 0 
-                ? (execTimes.reduce((a, b) => a + b, 0) / execTimes.length).toFixed(2) 
-                : 0;
-            
-            const cpuUtils = Object.values(parsedData.hosts)
-                .filter(h => !isNaN(parseFloat(h.CPUUtilization)))
-                .map(h => parseFloat(h.CPUUtilization));
-            
-            const avgCpuUtil = cpuUtils.length > 0 
-                ? (cpuUtils.reduce((a, b) => a + b, 0) / cpuUtils.length).toFixed(2) 
-                : 0;
-            
-            const totalEnergy = Object.values(parsedData.hosts)
-                .filter(h => !isNaN(parseFloat(h.EnergyConsumed)))
-                .reduce((acc, h) => acc + parseFloat(h.EnergyConsumed), 0).toFixed(2);
-            
-            // Calculate efficiency score (hypothetical formula: 10 - (energy/workload ratio / 100))
-            const energyPerCloudlet = successCount > 0 ? totalEnergy / successCount : 0;
-            const efficiencyScore = Math.max(1, Math.min(10, (10 - (energyPerCloudlet / 100)))).toFixed(1);
-            
-            // Update KPI values
-            document.getElementById('avg-execution-time').textContent = avgExecTime;
-            document.getElementById('avg-cpu-utilization').textContent = avgCpuUtil;
-            document.getElementById('total-energy').textContent = totalEnergy;
-            document.getElementById('efficiency-score').textContent = efficiencyScore;
-            
-            // Populate cloudlet table
-            populateCloudletTable(parsedData);
-            
-            // Populate VM table
-            populateVMTable(parsedData);
-            
-            // Create host details panels
-            createHostPanels(parsedData);
-            
-            // Create energy efficiency table
-            createEnergyTable(parsedData);
-            
-            // Create charts
-            createCharts(parsedData);
-            
-            // Hide loading, show content
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('content').style.display = 'block';
-            
-            // Set up event listeners for filters
-            setupEventListeners();
-        }
-        
-        // Function to populate cloudlet table
-        function populateCloudletTable(data) {
-            const tableBody = document.getElementById('cloudlet-results');
-            tableBody.innerHTML = '';
-            
-            Object.values(data.cloudlets).forEach(cloudlet => {
-                const row = document.createElement('tr');
-                const statusClass = cloudlet.Status && cloudlet.Status.toLowerCase() === 'success' 
-                    ? 'bg-success' 
-                    : 'bg-danger';
-                
-                row.innerHTML = `
-                    <td>${cloudlet.id}</td>
-                    <td><span class="badge ${statusClass}">${cloudlet.Status || 'UNKNOWN'}</span></td>
-                    <td>${cloudlet.VMID || 'N/A'}</td>
-                    <td>${cloudlet.ExecutionTime || 'N/A'}</td>
-                    <td>${cloudlet.StartTime || 'N/A'}</td>
-                    <td>${cloudlet.FinishTime || 'N/A'}</td>
-                    <td>${cloudlet.CPUTime || 'N/A'}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary" onclick="showCloudletDetails(${cloudlet.id})">
-                            <i class="fas fa-info-circle"></i>
-                        </button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-        
-        // Function to populate VM table
-        function populateVMTable(data) {
-            const tableBody = document.getElementById('vm-results');
-            tableBody.innerHTML = '';
-            
-            Object.values(data.vms).forEach(vm => {
-                const row = document.createElement('tr');
-                const statusClass = vm.Status && vm.Status.toLowerCase() === 'success' 
-                    ? 'bg-success' 
-                    : 'bg-danger';
-                
-                row.innerHTML = `
-                    <td>${vm.id}</td>
-                    <td>${vm.HostID || 'N/A'}</td>
-                    <td><span class="badge ${statusClass}">${vm.Status || 'UNKNOWN'}</span></td>
-                    <td>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: ${vm.CPUUtilization}%" 
-                                aria-valuenow="${vm.CPUUtilization}" aria-valuemin="0" aria-valuemax="100">
-                            </div>
-                        </div>
-                        ${vm.CPUUtilization}%
-                    </td>
-                    <td>
-                        <div class="progress">
-                            <div class="progress-bar bg-info" role="progressbar" style="width: ${vm.RAMUtilization}%" 
-                                aria-valuenow="${vm.RAMUtilization}" aria-valuemin="0" aria-valuemax="100">
-                            </div>
-                        </div>
-                        ${vm.RAMUtilization}%
-                    </td>
-                    <td>${vm.CloudletsProcessed || 0}</td>
-                    <td>${vm.StartTime || 'N/A'}</td>
-                    <td>${vm.FinishTime || 'N/A'}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-        
-        // Function to create host panels
-        function createHostPanels(data) {
-            const container = document.getElementById('host-details-container');
-            container.innerHTML = '';
-            
-            Object.values(data.hosts).forEach(host => {
-                const hostPanel = document.createElement('div');
-                hostPanel.className = 'detail-metric';
-                
-                const vmList = host.VMs && host.VMs.length > 0 
-                    ? host.VMs.map(vmId => `<span class="badge bg-primary me-1">VM ${vmId}</span>`).join(' ')
-                    : 'None';
-                
-                const cpuUtilClass = parseFloat(host.CPUUtilization) > 70 
-                    ? 'bg-warning' 
-                    : 'bg-success';
-                
-                hostPanel.innerHTML = `
-                    <h5>Host ${host.id}</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><span class="detail-label">Status:</span> <span class="detail-value">${host.Status || 'Active'}</span></p>
-                            <p><span class="detail-label">CPU Utilization:</span> 
-                                <div class="progress">
-                                    <div class="progress-bar ${cpuUtilClass}" role="progressbar" 
-                                        style="width: ${host.CPUUtilization}%" 
-                                        aria-valuenow="${host.CPUUtilization}" 
-                                        aria-valuemin="0" 
-                                        aria-valuemax="100">
-                                    </div>
-                                </div>
-                                <span class="detail-value">${host.CPUUtilization}%</span>
-                            </p>
-                            <p><span class="detail-label">Memory Utilization:</span> 
-                                <div class="progress">
-                                    <div class="progress-bar bg-info" role="progressbar" 
-                                        style="width: ${host.MemoryUtilization}%" 
-                                        aria-valuenow="${host.MemoryUtilization}" 
-                                        aria-valuemin="0" 
-                                        aria-valuemax="100">
-                                    </div>
-                                </div>
-                                <span class="detail-value">${host.MemoryUtilization}%</span>
-                            </p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><span class="detail-label">Energy Consumed:</span> <span class="detail-value">${host.EnergyConsumed} J</span></p>
-                            <p><span class="detail-label">Start Time:</span> <span class="detail-value">${host.StartTime || 'N/A'}</span></p>
-                            <p><span class="detail-label">Hosted VMs:</span> ${vmList}</p>
-                        </div>
+        <div class="dashboard-summary">
+            <div class="summary-card">
+                <div class="summary-icon blue">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <div class="summary-details">
+                    <h3>Total Cloudlets</h3>
+                    <span id="total-cloudlets" class="summary-value">-</span>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon green">
+                    <i class="fas fa-server"></i>
+                </div>
+                <div class="summary-details">
+                    <h3>Active Hosts</h3>
+                    <span id="active-hosts" class="summary-value">-</span>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon purple">
+                    <i class="fas fa-memory"></i>
+                </div>
+                <div class="summary-details">
+                    <h3>Virtual Machines</h3>
+                    <span id="total-vms" class="summary-value">-</span>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon orange">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="summary-details">
+                    <h3>Total Energy</h3>
+                    <span id="total-energy" class="summary-value">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-clock"></i> Cloudlet Execution Times</h2>
+                    <div class="card-actions">
+                        <button class="card-action-btn"><i class="fas fa-expand"></i></button>
                     </div>
-                `;
-                
-                container.appendChild(hostPanel);
-            });
-        }
-        
-        // Function to create energy table
-        function createEnergyTable(data) {
-            const tableBody = document.getElementById('energy-results');
-            tableBody.innerHTML = '';
+                </div>
+                <div class="chart-container">
+                    <canvas id="executionTimeChart"></canvas>
+                </div>
+            </div>
             
-            Object.values(data.hosts).forEach(host => {
-                const row = document.createElement('tr');
-                
-                // Calculate energy per workload
-                const vms = host.VMs || [];
-                let totalCloudlets = 0;
-                
-                vms.forEach(vmId => {
-                    if (data.vms[vmId] && data.vms[vmId].CloudletsProcessed) {
-                        totalCloudlets += parseInt(data.vms[vmId].CloudletsProcessed);
-                    }
-                });
-                
-                const energyPerWorkload = totalCloudlets > 0 
-                    ? (parseFloat(host.EnergyConsumed) / totalCloudlets).toFixed(2)
-                    : 'N/A';
-                
-                // Determine efficiency rating
-                let efficiencyRating = '';
-                let indicator = '';
-                
-                if (energyPerWorkload !== 'N/A') {
-                    const epwValue = parseFloat(energyPerWorkload);
-                    if (epwValue < 100) {
-                        efficiencyRating = 'Excellent';
-                        indicator = '<span class="energy-indicator energy-efficient"></span>';
-                    } else if (epwValue < 200) {
-                        efficiencyRating = 'Good';
-                        indicator = '<span class="energy-indicator energy-moderate"></span>';
-                    } else {
-                        efficiencyRating = 'Poor';
-                        indicator = '<span class="energy-indicator energy-inefficient"></span>';
-                    }
-                }
-                
-                row.innerHTML = `
-                    <td>Host ${host.id}</td>
-                    <td>${host.EnergyConsumed} J</td>
-                    <td>${totalCloudlets} cloudlets</td>
-                    <td>${energyPerWorkload} J/cloudlet</td>
-                    <td>${indicator} <span class="efficiency-score">${efficiencyRating}</span></td>
-                `;
-                
-                tableBody.appendChild(row);
-            });
-        }
-        
-        // Function to create charts
-        function createCharts(data) {
-            createUtilizationCharts(data);
-            createEnergyCharts(data);
-            createTimeSeriesChart(data);
-        }
-        
-        // Function to create utilization charts
-        function createUtilizationCharts(data) {
-            // Host CPU Utilization chart
-            const hostLabels = Object.values(data.hosts).map(host => `Host ${host.id}`);
-            const hostCpuData = Object.values(data.hosts).map(host => parseFloat(host.CPUUtilization) || 0);
-            const hostMemoryData = Object.values(data.hosts).map(host => parseFloat(host.MemoryUtilization) || 0);
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-bolt"></i> Host Energy Consumption</h2>
+                    <div class="card-actions">
+                        <button class="card-action-btn"><i class="fas fa-expand"></i></button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="energyConsumptionChart"></canvas>
+                </div>
+            </div>
             
-            new Chart(document.getElementById('host-utilization-chart'), {
-                type: 'bar',
-                data: {
-                    labels: hostLabels,
-                    datasets: [{
-                        label: 'CPU Utilization (%)',
-                        data: hostCpuData,
-                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            title: {
-                                display: true,
-                                text: 'Utilization (%)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Host CPU Utilization'
-                        }
-                    }
-                }
-            });
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-microchip"></i> Host CPU Utilization</h2>
+                    <div class="card-actions">
+                        <button class="card-action-btn"><i class="fas fa-expand"></i></button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="cpuUtilizationChart"></canvas>
+                </div>
+            </div>
             
-            new Chart(document.getElementById('host-memory-chart'), {
-                type: 'bar',
-                data: {
-                    labels: hostLabels,
-                    datasets: [{
-                        label: 'Memory Utilization (%)',
-                        data: hostMemoryData,
-                        backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            title: {
-                                display: true,
-                                text: 'Utilization (%)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Host Memory Utilization'
-                        }
-                    }
-                }
-            });
-            
-            // VM Utilization charts
-            const vmLabels = Object.values(data.vms).map(vm => `VM ${vm.id}`).slice(0, 10); // Limit to 10 for readability
-            const vmCpuData = Object.values(data.vms).map(vm => parseFloat(vm.CPUUtilization) || 0).slice(0, 10);
-            const vmRamData = Object.values(data.vms).map(vm => parseFloat(vm.RAMUtilization) || 0).slice(0, 10);
-            
-            new Chart(document.getElementById('vm-utilization-chart'), {
-                type: 'bar',
-                data: {
-                    labels: vmLabels,
-                    datasets: [{
-                        label: 'CPU Utilization (%)',
-                        data: vmCpuData,
-                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            title: {
-                                display: true,
-                                text: 'Utilization (%)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'VM CPU Utilization (Top 10 VMs)'
-                        },
-                        subtitle: {
-                            display: true,
-                            text: 'Showing first 10 VMs for readability'
-                        }
-                    }
-                }
-            });
-            
-            new Chart(document.getElementById('vm-ram-chart'), {
-                type: 'bar',
-                data: {
-                    labels: vmLabels,
-                    datasets: [{
-                        label: 'RAM Utilization (%)',
-                        data: vmRamData,
-                        backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            title: {
-                                display: true,
-                                text: 'Utilization (%)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'VM RAM Utilization (Top 10 VMs)'
-                        },
-                        subtitle: {
-                            display: true,
-                            text: 'Showing first 10 VMs for readability'
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Function to create energy charts
-        function createEnergyCharts(data) {
-            // Energy Consumption Chart
-            const hostLabels = Object.values(data.hosts).map(host => `Host ${host.id}`);
-            const energyData = Object.values(data.hosts).map(host => parseFloat(host.EnergyConsumed) || 0);
-            const utilizationData = Object.values(data.hosts).map(host => parseFloat(host.CPUUtilization) || 0);
-            
-            new Chart(document.getElementById('energy-chart'), {
-                type: 'bar',
-                data: {
-                    labels: hostLabels,
-                    datasets: [{
-                        label: 'Energy Consumed (J)',
-                        data: energyData,
-                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Energy (Joules)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Energy Consumption by Host'
-                        }
-                    }
-                }
-            });
-            
-            // Energy vs. Utilization Chart
-            new Chart(document.getElementById('energy-utilization-chart'), {
-                type: 'scatter',
-                data: {
-                    datasets: [{
-                        label: 'Energy vs. CPU Utilization',
-                        data: hostLabels.map((_, i) => ({
-                            x: utilizationData[i],
-                            y: energyData[i]
-                        })),
-                        backgroundColor: 'rgba(153, 102, 255, 0.7)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        borderWidth: 1,
-                        pointRadius: 8,
-                        pointHoverRadius: 10
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'CPU Utilization (%)'
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Energy Consumed (J)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const index = context.dataIndex;
-                                    return `${hostLabels[index]}: ${energyData[index]}J @ ${utilizationData[index]}% CPU`;
-                                }
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: 'Energy Consumption vs. CPU Utilization'
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Function to create time series chart
-        function createTimeSeriesChart(data) {
-            if (!data.timeSeriesData || data.timeSeriesData.length === 0) {
-                return;
-            }
-            
-            const timeLabels = data.timeSeriesData.map(point => point.timestamp);
-            const datasets = [];
-            
-            // Get unique host IDs
-            const hostIds = Object.keys(data.hosts).map(id => parseInt(id));
-            
-            // Create datasets for each host
-            hostIds.forEach(hostId => {
-                const hostData = data.timeSeriesData.map(point => 
-                    point.hostData[hostId] ? parseFloat(point.hostData[hostId].energy) : 0
-                );
-                
-                // Generate a color based on host ID
-                const hue = (hostId * 137) % 360;
-                const color = `hsl(${hue}, 70%, 60%)`;
-                
-                datasets.push({
-                    label: `Host ${hostId}`,
-                    data: hostData,
-                    borderColor: color,
-                    backgroundColor: `hsla(${hue}, 70%, 60%, 0.2)`,
-                    fill: false,
-                    tension: 0.4
-                });
-            });
-            
-            new Chart(document.getElementById('energy-time-chart'), {
-                type: 'line',
-                data: {
-                    labels: timeLabels,
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Time'
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Energy Consumed (J)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Energy Consumption Over Time'
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Setup event listeners for filters and interactions
-        function setupEventListeners() {
-            // Cloudlet search
-            document.getElementById('cloudlet-search').addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                const rows = document.querySelectorAll('#cloudlet-results tr');
-                
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(searchTerm) ? '' : 'none';
-                });
-            });
-            
-            // Status filter
-            document.getElementById('status-filter').addEventListener('change', function(e) {
-                const filterValue = e.target.value.toLowerCase();
-                const rows = document.querySelectorAll('#cloudlet-results tr');
-                
-                rows.forEach(row => {
-                    if (filterValue === 'all') {
-                        row.style.display = '';
-                    } else {
-                        const statusCell = row.querySelector('td:nth-child(2)');
-                        const statusText = statusCell ? statusCell.textContent.toLowerCase() : '';
-                        row.style.display = statusText.includes(filterValue) ? '' : 'none';
-                    }
-                });
-            });
-            
-            // Reset filters
-            document.getElementById('reset-filters').addEventListener('click', function() {
-                document.getElementById('cloudlet-search').value = '';
-                document.getElementById('status-filter').value = 'all';
-                
-                const rows = document.querySelectorAll('#cloudlet-results tr');
-                rows.forEach(row => {
-                    row.style.display = '';
-                });
-            });
-        }
-        
-        // Show cloudlet details modal
-        window.showCloudletDetails = function(cloudletId) {
-            // Implementation would create a modal to show detailed cloudlet info
-            alert(`Detailed information for Cloudlet ${cloudletId} would be shown in a modal`);
-        };
-        
-        // Export functions
-        window.exportToPDF = function() {
-            alert('Exporting to PDF functionality would be implemented here');
-        };
-        
-        window.exportToCSV = function() {
-            alert('Exporting to CSV functionality would be implemented here');
-        };
-        
-        // Load and process the data
-        function loadData() {
-            // In a real implementation, we would load data from the CSV
-            // For this demo, we'll use generated data
-            const simulatedData = generateSimulatedData();
-            displayData(simulatedData);
-        }
-        
-        // Start loading the data when page loads
-        window.onload = loadData;
-    </script>
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-project-diagram"></i> VM Allocation</h2>
+                    <div class="card-actions">
+                        <button class="card-action-btn"><i class="fas fa-expand"></i></button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="vmAllocationChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="card full-width">
+            <div class="card-header">
+                <h2><i class="fas fa-table"></i> Simulation Results</h2>
+                <div class="card-actions">
+                    <div class="search-container">
+                        <input type="text" id="search-input" placeholder="Search data...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <select id="filter-select">
+                        <option value="all">All Types</option>
+                        <option value="Cloudlet">Cloudlet</option>
+                        <option value="VM">VM</option>
+                        <option value="Host">Host</option>
+                    </select>
+                </div>
+            </div>
+            <div id="results-table" class="table-container">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>Loading data...</span>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 CloudSim Project Dashboard - Optimizing Energy Consumption and Resource Allocation</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
