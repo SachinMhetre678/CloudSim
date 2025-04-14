@@ -59,6 +59,10 @@ Just push to the main branch or open a PR. GitHub Actions will:
 
 ---
 
+> 🔗 CI Status: ![CI/CD Pipeline](https://github.com/SachinMhetre678/CloudSim/actions/workflows/maven.yml/badge.svg)
+
+---
+
 ## 🔧 Understanding the Simulation
 
 1. **Hosts** and **VMs** are initialized with varying MIPS capacities.
